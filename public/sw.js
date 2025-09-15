@@ -14,6 +14,7 @@ self.addEventListener("install", (event) => {
       "/css/style.css",
       "/src/main.jsx",
       "/icons/favicon.ico",
+      "/js/app.js",
       "/icons/icon-512x512.png",
       "/icons/apple-touch-icon-180x180.png",
       "/icons/pwa-192x192.png",
