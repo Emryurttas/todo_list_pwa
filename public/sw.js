@@ -12,14 +12,16 @@ self.addEventListener("install", (event) => {
       "/",
       "/index.html",
       "/css/style.css",
-      "/src/main.jsx",
-      "/icons/favicon.ico",
       "/js/app.js",
-      "/icons/icon-512x512.png",
+
       "/icons/apple-touch-icon-180x180.png",
+      "/icons/favicon.ico",
+      "/icons/icon-512x512.png",
+      "/icons/maskable-icon-512x512.png",
+      "/icons/pwa-64x64.png",
       "/icons/pwa-192x192.png",
       "/icons/pwa-512x512.png",
-      "/icons/pwa-64x64.png",
+
       "/manifest.json"
     ])
   );

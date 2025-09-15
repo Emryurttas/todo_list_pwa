@@ -16,8 +16,6 @@ const registerServiceWorker = async () => {
     } catch (error) {
       console.error(`L'enregistrement a échoué : ${error}`);
     }
-  } else {
-    console.log("Service Workers non supportés");
   }
 };
 
