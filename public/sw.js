@@ -19,7 +19,8 @@ self.addEventListener("install", (event) => {
       "/icons/apple-touch-icon-180x180.png",
       "/icons/pwa-192x192.png",
       "/icons/pwa-512x512.png",
-      "/icons/pwa-64x64.png"
+      "/icons/pwa-64x64.png",
+      "/manifest.json"
     ])
   );
   self.skipWaiting();
