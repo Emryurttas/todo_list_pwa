@@ -91,4 +91,4 @@ self.addEventListener("fetch", (event) => {
     }),
   );
 });
-self.skipWaiting();
+// self.skipWaiting();
