@@ -82,6 +82,15 @@ self.addEventListener("install", (event) => {
     ])
   );
 });
+
+self.addEventListener("fetch", (event) => {
+  if (event.request.url.includes("background.css")) {
+    event.respondWith(
+      new Response(".main {background: red;}", { headers: { "Content-Type": "text/css" }})
+    );
+  }
+});
+
 self.addEventListener("fetch", (event) => {
   event.respondWith(
     cacheFirst({
