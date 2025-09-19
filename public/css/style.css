@@ -23,7 +23,7 @@ header {
   flex-direction: column;
   flex: 1;
   padding: 1rem;
-  background-color: beige;
+  background-color: green;
 }
 
 .todo-add-form {
