@@ -10,7 +10,7 @@ self.addEventListener("install", (event) => {
   event.waitUntil(
     addResourcesToCache([
       "/",
-      "/index.html",
+
       "/css/style.css",
       "/js/app.js",
 
@@ -22,7 +22,8 @@ self.addEventListener("install", (event) => {
       "/icons/pwa-192x192.png",
       "/icons/pwa-512x512.png",
 
-      "/manifest.json"
+      "/manifest.json",
+      "/screenshots/screenshot1.png"
     ])
   );
   self.skipWaiting();
