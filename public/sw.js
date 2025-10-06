@@ -10,22 +10,14 @@ const addResourcesToCache = async (resources) => {
 self.addEventListener("install", (event) => {
     console.log("[Service Worker] Installation en cours...");
     event.waitUntil(
-        addResourcesToCache([
-            "/",
-            "/css/style.css",
-            "/js/app.js",
-            "/icons/apple-touch-icon-180x180.png",
-            "/icons/favicon.ico",
-            "/icons/icon-512x512.png",
-            "/icons/maskable-icon-512x512.png",
-            "/icons/pwa-64x64.png",
-            "/icons/pwa-192x192.png",
-            "/icons/pwa-512x512.png",
-            "/manifest.json",
-            "/screenshots/screenshot1.png",
-        ])
+        (async () => {
+            const urlsToCache = (self.__WB_MANIFEST || []).map(entry => entry.url);
+            await addResourcesToCache(urlsToCache);
+
+            self.skipWaiting();
+            console.log("[Service Worker] Caches statiques mis à jour avec Workbox manifest");
+        })()
     );
-    self.skipWaiting();
 });
 
 const deleteCache = async (key) => {
