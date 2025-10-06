@@ -1,24 +1,9 @@
+import { precacheAndRoute } from 'workbox-precaching';
+
 const STATIC_CACHE_NAME = "todosApp-static.v3";
 const TODOS_CACHE_NAME = "todos";
 
-
-const addResourcesToCache = async (resources) => {
-    const cache = await caches.open(STATIC_CACHE_NAME);
-    await cache.addAll(resources);
-};
-
-self.addEventListener("install", (event) => {
-    console.log("[Service Worker] Installation en cours...");
-    event.waitUntil(
-        (async () => {
-            const urlsToCache = (self.__WB_MANIFEST || []).map(entry => entry.url);
-            await addResourcesToCache(urlsToCache);
-
-            self.skipWaiting();
-            console.log("[Service Worker] Caches statiques mis à jour avec Workbox manifest");
-        })()
-    );
-});
+precacheAndRoute(self.__WB_MANIFEST || []);
 
 const deleteCache = async (key) => {
     await caches.delete(key);
