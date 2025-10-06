@@ -51,11 +51,6 @@ export default defineConfig({
 				],
 				icons: [
 					{
-						src: 'icons/icon-512x512.png',
-						type: 'image/png',
-						sizes: '512x512'
-					},
-					{
 						src: 'icons/apple-touch-icon-180x180.png',
 						type: 'image/png',
 						sizes: '180x180'
