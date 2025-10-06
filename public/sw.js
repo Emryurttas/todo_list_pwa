@@ -1,21 +1,10 @@
-import { precacheAndRoute } from 'workbox-precaching';
+import { precacheAndRoute, cleanupOutdatedCaches } from 'workbox-precaching';
 
-const STATIC_CACHE_NAME = "todosApp-static.v3";
 const TODOS_CACHE_NAME = "todos";
 
+cleanupOutdatedCaches();
+
 precacheAndRoute(self.__WB_MANIFEST || []);
-
-const deleteCache = async (key) => {
-    await caches.delete(key);
-};
-
-const deleteOldCaches = async () => {
-    const cacheKeepList = [STATIC_CACHE_NAME, TODOS_CACHE_NAME];
-    const keyList = await caches.keys();
-    const cachesToDelete = keyList.filter((key) => !cacheKeepList.includes(key));
-    await Promise.all(cachesToDelete.map(deleteCache));
-    console.log("[Service Worker] Caches obsolètes supprimés :", cachesToDelete);
-};
 
 const enableNavigationPreload = async () => {
     if (self.registration.navigationPreload) {
@@ -28,7 +17,6 @@ self.addEventListener("activate", (event) => {
     event.waitUntil(
         (async () => {
             await enableNavigationPreload();
-            await deleteOldCaches();
             self.clients.claim();
         })()
     );
@@ -66,15 +54,13 @@ self.addEventListener("fetch", (event) => {
 });
 
 const putInCache = async (request, response) => {
-    const cache = await caches.open(STATIC_CACHE_NAME);
+    const cache = await caches.open('todosApp-static');
     await cache.put(request, response);
 };
 
 const cacheFirst = async ({ request, preloadResponsePromise, fallbackUrl }) => {
     const responseFromCache = await caches.match(request);
-    if (responseFromCache) {
-        return responseFromCache;
-    }
+    if (responseFromCache) return responseFromCache;
 
     const preloadResponse = await preloadResponsePromise;
     if (preloadResponse) {
