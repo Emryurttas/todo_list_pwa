@@ -1,111 +1,113 @@
-const STATIC_CACHE_NAME = "todosApp-static.v0";
+const STATIC_CACHE_NAME = "todosApp-static.v2";
 
 const addResourcesToCache = async (resources) => {
-  const cache = await caches.open(STATIC_CACHE_NAME);
-  await cache.addAll(resources);
+    const cache = await caches.open(STATIC_CACHE_NAME);
+    await cache.addAll(resources);
 };
 
-const putInCache = async (request, response) => {
-  const cache = await caches.open(STATIC_CACHE_NAME);
-  await cache.put(request, response);
+self.addEventListener("install", (event) => {
+    console.log("[Service Worker] Installation en cours...");
+    event.waitUntil(
+        addResourcesToCache([
+            "/",
+            "/css/style.css",
+            "/js/app.js",
+
+            "/icons/apple-touch-icon-180x180.png",
+            "/icons/favicon.ico",
+            "/icons/icon-512x512.png",
+            "/icons/maskable-icon-512x512.png",
+            "/icons/pwa-64x64.png",
+            "/icons/pwa-192x192.png",
+            "/icons/pwa-512x512.png",
+
+            "/manifest.json",
+            "/screenshots/screenshot1.png",
+        ])
+    );
+    self.skipWaiting();
+});
+
+const deleteCache = async (key) => {
+    await caches.delete(key);
 };
 
-const cacheFirst = async ({ request, preloadResponsePromise, fallbackUrl }) => {
-  // Pour commencer on essaie d'obtenir la ressource depuis le cache
-  const responseFromCache = await caches.match(request);
-  if (responseFromCache) {
-    return responseFromCache;
-  }
-
-  // Ensuite, on tente d'utiliser et de mettre en cache
-  // la réponse préchargée si elle existe
-  const preloadResponse = await preloadResponsePromise;
-  if (preloadResponse) {
-    console.info("using preload response", preloadResponse);
-    putInCache(request, preloadResponse.clone());
-    return preloadResponse;
-  }
-
-  // Ensuite, on tente de l'obtenir du réseau
-  try {
-    const responseFromNetwork = await fetch(request);
-    // Une réponse ne peut être utilisée qu'une fois
-    // On la clone pour en mettre une copie en cache
-    // et servir l'originale au navigateur
-    putInCache(request, responseFromNetwork.clone());
-    return responseFromNetwork;
-  } catch (error) {
-    const fallbackResponse = await caches.match(fallbackUrl);
-    if (fallbackResponse) {
-      return fallbackResponse;
-    }
-    // Quand il n'y a même pas de contenu par défaut associé
-    // on doit tout de même renvoyer un objet Response
-    return new Response("Network error happened", {
-      status: 408,
-      headers: { "Content-Type": "text/plain" },
-    });
-  }
+const deleteOldCaches = async () => {
+    const cacheKeepList = [STATIC_CACHE_NAME];
+    const keyList = await caches.keys();
+    const cachesToDelete = keyList.filter((key) => !cacheKeepList.includes(key));
+    await Promise.all(cachesToDelete.map(deleteCache));
+    console.log("[Service Worker] Caches obsolètes supprimés :", cachesToDelete);
 };
 
-// On active le préchargement à la navigation
 const enableNavigationPreload = async () => {
-  if (self.registration.navigationPreload) {
-    await self.registration.navigationPreload.enable();
-  }
+    if (self.registration.navigationPreload) {
+        await self.registration.navigationPreload.enable();
+    }
 };
 
 self.addEventListener("activate", (event) => {
-  event.waitUntil(enableNavigationPreload());
+    console.log("[Service Worker] Activation...");
+    event.waitUntil(
+        (async () => {
+            await enableNavigationPreload();
+            await deleteOldCaches();
+            self.clients.claim();
+        })()
+    );
 });
 
+const putInCache = async (request, response) => {
+    const cache = await caches.open(STATIC_CACHE_NAME);
+    await cache.put(request, response);
+};
 
-self.addEventListener("install", (event) => {
-  console.log("[Service Worker] Installation en cours");
-  event.waitUntil(
-    addResourcesToCache([
-      "/",
+const cacheFirst = async ({ request, preloadResponsePromise, fallbackUrl }) => {
+    const responseFromCache = await caches.match(request);
+    if (responseFromCache) {
+        return responseFromCache;
+    }
 
-      "/css/style.css",
-      "/js/app.js",
+    const preloadResponse = await preloadResponsePromise;
+    if (preloadResponse) {
+        console.info("Using preload response", preloadResponse);
+        putInCache(request, preloadResponse.clone());
+        return preloadResponse;
+    }
 
-      "/icons/apple-touch-icon-180x180.png",
-      "/icons/favicon.ico",
-      "/icons/icon-512x512.png",
-      "/icons/maskable-icon-512x512.png",
-      "/icons/pwa-64x64.png",
-      "/icons/pwa-192x192.png",
-      "/icons/pwa-512x512.png",
-
-      "/manifest.json",
-      "/screenshots/screenshot1.png"
-    ])
-  );
-});
+    try {
+        const responseFromNetwork = await fetch(request);
+        putInCache(request, responseFromNetwork.clone());
+        return responseFromNetwork;
+    } catch (error) {
+        const fallbackResponse = await caches.match(fallbackUrl);
+        if (fallbackResponse) {
+            return fallbackResponse;
+        }
+        return new Response("Network error happened", {
+            status: 408,
+            headers: { "Content-Type": "text/plain" },
+        });
+    }
+};
 
 self.addEventListener("fetch", (event) => {
-  // Si la requête cible une url contenant le fichier background.css
-  if (event.request.url.includes("background.css")) {
-    // La réponse produite sera
+    if (event.request.url.includes("background.css")) {
+        event.respondWith(
+            fetch(event.request).catch(() => {
+                return new Response(".main {background: orange;}", {
+                    headers: { "Content-Type": "text/css" },
+                });
+            })
+        );
+        return;
+    }
+
     event.respondWith(
-      // Le résultat de la requête vers le fichier background.css
-      fetch(event.request)
-        // Ou en cas d'échec
-        .catch(() => {
-          // une réponse fabriquée avec un fond orange
-          return new Response(".main {background: orange;}", { headers: { "Content-Type": "text/css" }});
+        cacheFirst({
+            request: event.request,
+            preloadResponsePromise: event.preloadResponse,
+            fallbackUrl: "/screenshots/screenshot1.png",
         })
-    )
-  }
+    );
 });
-
-self.addEventListener("fetch", (event) => {
-  event.respondWith(
-    cacheFirst({
-      request: event.request,
-      preloadResponsePromise: event.preloadResponse,
-      fallbackUrl: "/screenshots/screenshot1.png",
-    }),
-  );
-});
-self.skipWaiting();
