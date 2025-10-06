@@ -22,7 +22,8 @@ export default defineConfig({
 				'icons/favicon.ico',
 				'icons/apple-touch-icon-180x180.png',
 				'icons/maskable-icon-512x512.png',
-				'screenshots/screenshot1.png'
+				'screenshots/screenshot1.png',
+				'icons/pwa-512x512.png',
 			],
 			manifest: {
 				short_name: 'list',
