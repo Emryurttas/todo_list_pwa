@@ -1,4 +1,6 @@
-const STATIC_CACHE_NAME = "todosApp-static.v2";
+const STATIC_CACHE_NAME = "todosApp-static.v3";
+const TODOS_CACHE_NAME = "todos";
+
 
 const addResourcesToCache = async (resources) => {
     const cache = await caches.open(STATIC_CACHE_NAME);
@@ -12,7 +14,6 @@ self.addEventListener("install", (event) => {
             "/",
             "/css/style.css",
             "/js/app.js",
-
             "/icons/apple-touch-icon-180x180.png",
             "/icons/favicon.ico",
             "/icons/icon-512x512.png",
@@ -20,7 +21,6 @@ self.addEventListener("install", (event) => {
             "/icons/pwa-64x64.png",
             "/icons/pwa-192x192.png",
             "/icons/pwa-512x512.png",
-
             "/manifest.json",
             "/screenshots/screenshot1.png",
         ])
@@ -33,7 +33,7 @@ const deleteCache = async (key) => {
 };
 
 const deleteOldCaches = async () => {
-    const cacheKeepList = [STATIC_CACHE_NAME];
+    const cacheKeepList = [STATIC_CACHE_NAME, TODOS_CACHE_NAME];
     const keyList = await caches.keys();
     const cachesToDelete = keyList.filter((key) => !cacheKeepList.includes(key));
     await Promise.all(cachesToDelete.map(deleteCache));
@@ -57,6 +57,37 @@ self.addEventListener("activate", (event) => {
     );
 });
 
+self.addEventListener("fetch", (event) => {
+    const { request } = event;
+
+    if (request.method === "GET" && request.url.includes(":7000")) {
+        event.respondWith(
+            (async () => {
+                try {
+                    const responseFromNetwork = await fetch(request);
+
+                    const todosCache = await caches.open(TODOS_CACHE_NAME);
+                    todosCache.put(request, responseFromNetwork.clone());
+
+                    console.log("[Service Worker] Liste des todos mise à jour depuis le réseau");
+                    return responseFromNetwork;
+                } catch (error) {
+                    console.log("[Service Worker] Réseau indisponible, récupération depuis la cache");
+                    const cachedResponse = await caches.match(request);
+                    if (cachedResponse) {
+                        return cachedResponse;
+                    }
+
+                    return new Response(JSON.stringify([]), {
+                        headers: { "Content-Type": "application/json" },
+                        status: 200,
+                    });
+                }
+            })()
+        );
+    }
+});
+
 const putInCache = async (request, response) => {
     const cache = await caches.open(STATIC_CACHE_NAME);
     await cache.put(request, response);
@@ -70,7 +101,6 @@ const cacheFirst = async ({ request, preloadResponsePromise, fallbackUrl }) => {
 
     const preloadResponse = await preloadResponsePromise;
     if (preloadResponse) {
-        console.info("Using preload response", preloadResponse);
         putInCache(request, preloadResponse.clone());
         return preloadResponse;
     }
