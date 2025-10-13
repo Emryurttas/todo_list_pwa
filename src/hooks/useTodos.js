@@ -1,5 +1,6 @@
 import {useEffect, useState} from "react";
-import {addApiTodo, deleteApiTodo, getApiTodos, updateApiTodo} from "../services/todos.js";
+import {addApiTodo, deleteApiTodo, getApiTodos, updateApiTodo, isApiReachable} from "../services/todos.js";
+
 
 export default function useTodos() {
     const [todos, setTodos] = useState([]);
@@ -67,6 +68,18 @@ export default function useTodos() {
                 setNetworkError(true);
             });
     };
+    const checkNetwork = async () => {
+        const reachable = await isApiReachable();
+        if (reachable) {
+            console.log("Réseau disponible à nouveau !");
+            setNetworkError(false);
+            window.location.reload();
+        } else {
+            console.log("Réseau toujours indisponible.");
+            setNetworkError(true);
+        }
+    };
+
 
     return {
         todos,
@@ -77,5 +90,6 @@ export default function useTodos() {
         deleteTodo,
         updateTodo,
         getTodos,
+        checkNetwork,
     };
 }
