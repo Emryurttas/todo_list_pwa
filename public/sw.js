@@ -23,11 +23,9 @@ self.addEventListener("activate", (event) => {
     event.waitUntil(
         (async () => {
             await enableNavigationPreload();
-            self.clients.claim();
         })()
     );
 });
-
 
 registerRoute(
     ({ url }) => url.port === '7000',
@@ -40,7 +38,6 @@ registerRoute(
         ],
     })
 );
-
 
 registerRoute(
     ({ request, url }) => request.destination === 'style' && url.pathname.endsWith('background.css'),
