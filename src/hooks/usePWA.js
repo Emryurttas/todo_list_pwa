@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useRegisterSW } from "virtual:pwa-register/react";
 
 export const usePWA = () => {
     const [isInstallable, setIsInstallable] = useState(false);
@@ -12,8 +13,6 @@ export const usePWA = () => {
             setIsInstallable(true);
         };
 
-        window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
-
         const handleAppInstalled = () => {
             console.log("PWA a été installée !");
             setIsInstalled(true);
@@ -21,6 +20,7 @@ export const usePWA = () => {
             setDeferredPrompt(null);
         };
 
+        window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
         window.addEventListener("appinstalled", handleAppInstalled);
 
         return () => {
@@ -38,9 +38,15 @@ export const usePWA = () => {
         setIsInstallable(false);
     };
 
+    const { needRefresh, updateServiceWorker } = useRegisterSW();
+    const [isNeedRefresh] = needRefresh;
+
     return {
         isInstallable,
         isInstalled,
         promptInstall,
+
+        isNeedRefresh,
+        updateServiceWorker,
     };
 };
