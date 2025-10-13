@@ -4,7 +4,11 @@ const TODOS_CACHE_NAME = "todos";
 
 cleanupOutdatedCaches();
 
-precacheAndRoute(self.__WB_MANIFEST);
+const filteredManifest = self.__WB_MANIFEST.filter(
+    entry => !entry.url.includes("css/background.css")
+);
+
+precacheAndRoute(filteredManifest);
 
 const enableNavigationPreload = async () => {
     if (self.registration.navigationPreload) {
