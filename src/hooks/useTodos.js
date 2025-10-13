@@ -80,6 +80,25 @@ export default function useTodos() {
         }
     };
 
+    useEffect(() => {
+        const handleOnline = () => {
+            console.log("Évènement ONLINE détecté");
+            checkNetwork();
+        };
+
+        const handleOffline = () => {
+            console.log("Évènement OFFLINE détecté");
+            setNetworkError(true);
+        };
+
+        window.addEventListener("online", handleOnline);
+        window.addEventListener("offline", handleOffline);
+
+        return () => {
+            window.removeEventListener("online", handleOnline);
+            window.removeEventListener("offline", handleOffline);
+        };
+    }, []);
 
     return {
         todos,
