@@ -17,13 +17,9 @@ export default defineConfig({
 			strategies: 'injectManifest',
 			srcDir: 'public',
 			filename: 'sw.js',
-			registerType: 'autoUpdate',
 			includeAssets: [
-				'icons/favicon.ico',
-				'icons/apple-touch-icon-180x180.png',
-				'icons/maskable-icon-512x512.png',
-				'screenshots/screenshot1.png',
-				'icons/pwa-512x512.png',
+				'icons/*.png',
+				'screenshots/*.png',
 			],
 			manifest: {
 				short_name: 'list',

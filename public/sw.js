@@ -4,7 +4,7 @@ const TODOS_CACHE_NAME = "todos";
 
 cleanupOutdatedCaches();
 
-precacheAndRoute(self.__WB_MANIFEST || []);
+precacheAndRoute(self.__WB_MANIFEST);
 
 const enableNavigationPreload = async () => {
     if (self.registration.navigationPreload) {
