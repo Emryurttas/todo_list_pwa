@@ -52,3 +52,9 @@ registerRoute(
         }
     }
 );
+self.addEventListener('message', (event) => {
+    if (event.data && event.data.type === 'SKIP_WAITING') {
+        console.log('[Service Worker] Activation de la nouvelle version via SKIP_WAITING');
+        self.skipWaiting();
+    }
+});
