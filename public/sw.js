@@ -1,5 +1,7 @@
-import {cleanupOutdatedCaches, precacheAndRoute} from 'workbox-precaching';
-import {registerRoute} from 'workbox-routing';
+import { cleanupOutdatedCaches, precacheAndRoute } from 'workbox-precaching';
+import { registerRoute } from 'workbox-routing';
+import { NetworkFirst } from 'workbox-strategies';
+import { ExpirationPlugin } from 'workbox-expiration';
 
 const TODOS_CACHE_NAME = "todos";
 
@@ -26,34 +28,19 @@ self.addEventListener("activate", (event) => {
     );
 });
 
-self.addEventListener("fetch", (event) => {
-    const { request } = event;
 
-    if (request.method === "GET" && request.url.includes(":7000")) {
-        event.respondWith(
-            (async () => {
-                try {
-                    const responseFromNetwork = await fetch(request);
-                    const todosCache = await caches.open(TODOS_CACHE_NAME);
-                    todosCache.put(request, responseFromNetwork.clone());
-                    console.log("[Service Worker] Liste des todos mise à jour depuis le réseau");
-                    return responseFromNetwork;
-                } catch (error) {
-                    console.log("[Service Worker] Réseau indisponible, récupération depuis la cache");
-                    const cachedResponse = await caches.match(request);
-                    if (cachedResponse) {
-                        return cachedResponse;
-                    }
+registerRoute(
+    ({ url }) => url.port === '7000',
+    new NetworkFirst({
+        cacheName: TODOS_CACHE_NAME,
+        plugins: [
+            new ExpirationPlugin({
+                maxAgeSeconds: 60 * 60 * 24 * 30,
+            }),
+        ],
+    })
+);
 
-                    return new Response(JSON.stringify([]), {
-                        headers: { "Content-Type": "application/json" },
-                        status: 200,
-                    });
-                }
-            })()
-        );
-    }
-});
 
 registerRoute(
     ({ request, url }) => request.destination === 'style' && url.pathname.endsWith('background.css'),
