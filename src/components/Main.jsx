@@ -5,7 +5,7 @@ import { InstallPWAButton } from "./InstallPWAButton.jsx";
 import { SWUpdateBanner } from "./SWUpdateBanner.jsx";
 
 export default function Main() {
-    const { todos, isLoading, toggleTodo, deleteTodo, updateTodo, addTodo, networkError } = useTodos();
+    const { todos, isLoading, toggleTodo, deleteTodo, updateTodo, addTodo, networkError, checkNetwork } = useTodos();
 
     return (
         <main className="main" style={{ minHeight: "100vh", padding: "20px" }}>
@@ -26,6 +26,21 @@ export default function Main() {
                     }}
                 >
                     Vous êtes actuellement hors ligne ou le serveur est inaccessible.
+                    <div style={{ marginTop: "10px" }}>
+                        <button
+                            onClick={checkNetwork}
+                            style={{
+                                padding: "8px 16px",
+                                backgroundColor: "#990000",
+                                color: "#fff",
+                                border: "none",
+                                borderRadius: "4px",
+                                cursor: "pointer",
+                            }}
+                        >
+                            Recharger
+                        </button>
+                    </div>
                 </div>
             )}
 
@@ -41,3 +56,4 @@ export default function Main() {
         </main>
     );
 }
+
