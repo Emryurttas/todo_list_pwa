@@ -69,14 +69,22 @@ export default function useTodos() {
             });
     };
     const checkNetwork = async () => {
-        const reachable = await isApiReachable();
-        if (reachable) {
-            console.log("Réseau disponible à nouveau !");
-            setNetworkError(false);
-            window.location.reload();
-        } else {
-            console.log("Réseau toujours indisponible.");
+        try {
+            const reachable = await isApiReachable();
+            if (reachable) {
+                console.log("Réseau disponible à nouveau !");
+                setNetworkError(false);
+
+                window.location.reload();
+            } else {
+                console.log("Réseau toujours indisponible");
+                setNetworkError(true);
+                alert("Le serveur est toujours inaccessible. Vérifiez votre connexion ou redémarrez l'API");
+            }
+        } catch (err) {
+            console.log("Erreur lors de la vérification du réseau :", err.message);
             setNetworkError(true);
+            alert("Erreur réseau. Impossible de recharger");
         }
     };
 
