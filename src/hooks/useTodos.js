@@ -8,11 +8,20 @@ export default function useTodos() {
     const [networkError, setNetworkError] = useState(false);
 
     useEffect(() => {
-        getAllTodos().catch((err) => {
-            console.log(err.message);
-            setNetworkError(true);
-        });
+        const cachedTodos = localStorage.getItem("todosCache");
+        if (cachedTodos) {
+            setTodos(JSON.parse(cachedTodos));
+        }
+        getAllTodos().catch(() => {});
     }, []);
+
+    useEffect(() => {
+        const handleBeforeUnload = () => {
+            localStorage.setItem("todosCache", JSON.stringify(todos));
+        };
+        window.addEventListener("beforeunload", handleBeforeUnload);
+        return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+    }, [todos]);
 
     const getAllTodos = async function () {
         try {
