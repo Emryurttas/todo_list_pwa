@@ -12,7 +12,8 @@
     "serve": "php -S localhost:9000 -t dist",
     "api:start": "json-server --host 0.0.0.0 --port $PORT --watch api/todos.json",
     "api:local": "json-server --watch api/todos.json --port 7000",
-    "api:restore": "cp api/todos.json.save api/todos.json"
+    "api:restore": "cp api/todos.json.save api/todos.json",
+    "deploy": "gh-pages -d dist"
   },
   "dependencies": {
     "@emotion/react": "^11.11.1",
