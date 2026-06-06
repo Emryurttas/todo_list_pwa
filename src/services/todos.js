@@ -1,4 +1,6 @@
-const api = "http://localhost:7000/todos";
+const api = import.meta.env.VITE_API_URL ||
+  "https://todo-list-pwa.onrender.com/todos";
+
 export async function getApiTodos() {
     const resp = await fetch(api);
     if (resp.ok) {
@@ -51,7 +53,7 @@ export async function addApiTodo(text) {
 }
 export async function isApiReachable() {
     try {
-        const resp = await fetch("http://localhost:7000/todos", { method: "HEAD" });
+        const resp = await fetch(api, { method: "HEAD" });
         return resp.ok;
     } catch (error) {
         console.error("Erreur réseau détectée :", error.message);
