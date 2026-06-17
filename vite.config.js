@@ -8,41 +8,30 @@ export default defineConfig({
   plugins: [
     react(),
     VitePWA({
-      strategies: 'injectManifest',
-      srcDir: 'public',
-      filename: 'sw.js',
-      registerType: 'autoUpdate',
-
-      includeAssets: [
-        'icons/*.png',
-        'screenshots/*.png',
-        'css/*.css',
-      ],
+      registerType: "autoUpdate",
 
       manifest: {
-        short_name: 'list',
-        name: 'todolist',
-        id: '/',
-        start_url: '/',
-        scope: '/',
-        display: 'standalone',
-        background_color: '#3367D6',
-        theme_color: '#3367D6',
-        description: 'Application de gestion de tâches en PWA',
-        screenshots: [
-          {
-            src: 'screenshots/screenshot1.png',
-            sizes: '1342x786',
-            type: 'image/png',
-            form_factor: 'wide'
-          }
-        ],
+        name: "todolist",
+        short_name: "list",
+        id: "/",
+        start_url: "/",
+        scope: "/",
+        display: "standalone",
+        background_color: "#3367D6",
+        theme_color: "#3367D6",
+        description: "Application de gestion de tâches en PWA",
+
         icons: [
-          { src: 'icons/apple-touch-icon-180x180.png', type: 'image/png', sizes: '180x180' },
-          { src: 'icons/favicon.ico', type: 'image/x-icon', sizes: '48x48' },
-          { src: 'icons/maskable-icon-512x512.png', type: 'image/png', sizes: '512x512', purpose: 'maskable' },
-          { src: 'icons/pwa-192x192.png', type: 'image/png', sizes: '192x192' },
-          { src: 'icons/pwa-512x512.png', type: 'image/png', sizes: '512x512' }
+          {
+            src: "icons/pwa-192x192.png",
+            sizes: "192x192",
+            type: "image/png"
+          },
+          {
+            src: "icons/pwa-512x512.png",
+            sizes: "512x512",
+            type: "image/png"
+          }
         ]
       }
     })
