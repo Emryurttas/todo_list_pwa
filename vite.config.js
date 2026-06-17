@@ -3,7 +3,7 @@ import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 
 export default defineConfig({
-  base: "/todo_list_pwa/",
+  base: "/",
 
   plugins: [
     react(),
@@ -22,9 +22,9 @@ export default defineConfig({
       manifest: {
         short_name: 'list',
         name: 'todolist',
-        id: '/todo_list_pwa/?source=pwa',
-        start_url: '/todo_list_pwa/?source=pwa',
-        scope: '/todo_list_pwa/',
+        id: '/',
+        start_url: '/',
+        scope: '/',
         display: 'standalone',
         background_color: '#3367D6',
         theme_color: '#3367D6',
