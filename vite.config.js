@@ -7,8 +7,11 @@ export default defineConfig({
 
   plugins: [
     react(),
+
     VitePWA({
       registerType: "autoUpdate",
+
+      includeAssets: ["favicon.ico", "icons/*.png"],
 
       manifest: {
         name: "todolist",
@@ -31,6 +34,24 @@ export default defineConfig({
             src: "icons/pwa-512x512.png",
             sizes: "512x512",
             type: "image/png"
+          }
+        ]
+      },
+
+      workbox: {
+        navigateFallback: "index.html",
+        cleanupOutdatedCaches: true,
+        runtimeCaching: [
+          {
+            urlPattern: ({ url }) => url.pathname.startsWith("/api/"),
+            handler: "NetworkFirst",
+            options: {
+              cacheName: "api-cache",
+              expiration: {
+                maxEntries: 50,
+                maxAgeSeconds: 60 * 5
+              }
+            }
           }
         ]
       }
