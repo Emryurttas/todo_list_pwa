@@ -14,7 +14,8 @@ export async function getApiTodos() {
 }
 
 export async function updateApiTodo(todo) {
-  const resp = await fetch(api + "/" + todo.id, {
+  const resp = await fetch(api + "/" + todo.id, { 
+    
     method: "PATCH",
     headers: {
       "Content-Type": "application/json"
