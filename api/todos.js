@@ -1,21 +1,21 @@
 let todos = [
   {
-    text: "Finir les sujets précédentsss",
+    text: "Finaliser les tâches en cours",
     done: true,
     id: 1
   },
   {
-    text: "Bien lire le sujet en cours et les documentations",
+    text: "Lire la documentation du projet",
     done: false,
     id: 3
   },
   {
-    text: "Vérifier que mon enseignant est bien ajouté en reporter de mon dépot gitlab",
+    text: "Vérifier la configuration du dépôt",
     done: false,
     id: 2
   },
   {
-    text: "Apporter des chouquettes à mon enseignants de TP",
+    text: "Préparer les éléments nécessaires au projet",
     done: false,
     id: 5
   }
